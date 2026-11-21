@@ -1,0 +1,9 @@
+jobqueue
+!jobqueue/
+jobqueue_unix
+cmd/jobqueue/debug
+.idea/
+vendor/
+# Build output
+job-queue
+*.exe
