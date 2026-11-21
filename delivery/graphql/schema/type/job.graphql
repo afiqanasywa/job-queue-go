@@ -1,8 +1,9 @@
 type Job {
-	id: String!
-	task: String!
-	status: String!
-	attempts: Int!
+  id: String!
+  task: String!
+  status: String!
+  attempts: Int!
+  idempotencyKey: String
 }
 
 type JobStatus {

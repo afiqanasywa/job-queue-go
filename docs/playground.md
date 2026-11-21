@@ -198,3 +198,28 @@ query {
 ```
 
 Wait a few seconds and check again to see jobs complete!
+
+---
+
+## Idempotent Enqueue
+
+Send the same `idempotencyKey` twice. Both aliases return the same job ID, and the job runs only once.
+
+```graphql
+mutation IdempotentEnqueue {
+  first: Enqueue(task: "charge-card", idempotencyKey: "order-42") { id status }
+  second: Enqueue(task: "charge-card", idempotencyKey: "order-42") { id status }
+}
+```
+
+---
+
+## Failing Job
+
+`failing-job` always fails. After 3 attempts its status is `failed`.
+
+```graphql
+mutation SimulateFailingJob {
+  Enqueue(task: "failing-job") { id status }
+}
+```

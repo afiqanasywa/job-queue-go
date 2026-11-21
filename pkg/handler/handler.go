@@ -65,15 +65,13 @@ func GraphiQLHandler(c echo.Context) (err error) {
 	// Parse your template file
 	tmpl, err := template.ParseFiles("./web/graphiql.html")
 	if err != nil {
-		c.NoContent(400)
-		return
+		return c.NoContent(http.StatusInternalServerError)
 	}
 
 	// Execute the template with data and write the response
 	err = tmpl.Execute(c.Response().Writer, data)
 	if err != nil {
-		c.NoContent(400)
-		return
+		return c.NoContent(http.StatusInternalServerError)
 	}
 	return
 }

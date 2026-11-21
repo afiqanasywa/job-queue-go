@@ -40,3 +40,19 @@ query GetAllJobStatus{
     completed
   }
 }
+
+mutation IdempotentEnqueue {
+  first: Enqueue(task: "charge-card", idempotencyKey: "order-42") {
+    id
+  }
+  second: Enqueue(task: "charge-card", idempotencyKey: "order-42") {
+    id
+  }
+}
+
+mutation SimulateFailingJob {
+  Enqueue(task: "failing-job") {
+    id
+    status
+  }
+}

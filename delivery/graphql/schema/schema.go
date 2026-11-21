@@ -1,33 +1,39 @@
+// Package schema holds the GraphQL schema. The .graphql files are embedded
+// into the binary with go:embed, so the server has no runtime file dependency
+// and no code generation step is needed.
 package schema
 
-// TODO:
-// 	- explain why I use .graphql files to define the schema
-// 	- explain why we embed the .graphql files in the binary.
-// 	- explain why this file is necessary and how the method is used.
-//
-// Use `go generate` to pack all *.graphql files under this directory (and sub-directories) into
-// a binary format.
-//
-//go:generate go-bindata -ignore=\.go -pkg=schema -o=bindata.go ./...
+import (
+	"bytes"
+	"embed"
+	"io/fs"
+	"sort"
+)
 
-import "bytes"
+//go:embed *.graphql type/*.graphql
+var files embed.FS
 
-// String reads the .graphql schema files from the generated _bindata.go file, concatenating the
-// files together into one string.
-//
-// If this method complains about not finding functions AssetNames() or MustAsset(),
-// run `go generate` against this package to generate the functions.
+// String concatenates every embedded .graphql file into one schema string.
 func String() string {
-	buf := bytes.Buffer{}
-	for _, name := range AssetNames() {
-		b := MustAsset(name)
-		buf.Write(b)
+	var names []string
+	_ = fs.WalkDir(files, ".", func(path string, d fs.DirEntry, err error) error {
+		if err == nil && !d.IsDir() {
+			names = append(names, path)
+		}
+		return err
+	})
+	sort.Strings(names)
 
-		// Add a newline if the file does not end in a newline.
+	buf := bytes.Buffer{}
+	for _, name := range names {
+		b, err := files.ReadFile(name)
+		if err != nil {
+			panic(err) // embedded files are always readable
+		}
+		buf.Write(b)
 		if len(b) > 0 && b[len(b)-1] != '\n' {
 			buf.WriteByte('\n')
 		}
 	}
-
 	return buf.String()
 }

@@ -38,6 +38,15 @@ func (q JobResolver) Attempts() int32 {
 	return q.Data.Attempts
 }
 
+// IdempotencyKey ....
+func (q JobResolver) IdempotencyKey() *string {
+	if q.Data.IdempotencyKey == "" {
+		return nil
+	}
+	key := q.Data.IdempotencyKey
+	return &key
+}
+
 // Pending ...
 func (t JobStatusResolver) Pending() int32 {
 	return t.Data.Pending

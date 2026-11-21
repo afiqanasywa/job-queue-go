@@ -1,4 +1,5 @@
 type Mutation {
-  # Create New Job
-  Enqueue(task: String!): Job!
+  # Create a new job. Sending the same idempotencyKey again returns the
+  # existing job instead of creating and processing a duplicate.
+  Enqueue(task: String!, idempotencyKey: String): Job!
 }

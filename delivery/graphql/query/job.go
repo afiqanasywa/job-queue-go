@@ -63,7 +63,7 @@ func (q JobQuery) JobStatus(ctx context.Context) (resolver.JobStatusResolver, er
 func (q JobQuery) JobsByIds(ctx context.Context, args struct {
 	IDs []string
 }) ([]resolver.JobResolver, error) {
-	loader := q.dataloader.JobLoader
+	loader := q.dataloader.JobLoader(ctx)
 
 	thunks := make([]dataloader.Thunk, 0, len(args.IDs))
 	for _, id := range args.IDs {
@@ -79,7 +79,7 @@ func (q JobQuery) JobsByIds(ctx context.Context, args struct {
 		}
 
 		if result == nil {
-			continue 
+			continue
 		}
 
 		job := result.(*entity.Job)

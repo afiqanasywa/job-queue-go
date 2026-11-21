@@ -18,7 +18,7 @@ JobBatchFunc called - DataLoader batching!  {"job_ids": ["id-2"], "batch_size": 
 func (q JobQuery) JobsByIds(ctx context.Context, args struct {
     IDs []string
 }) ([]resolver.JobResolver, error) {
-    loader := q.dataloader.JobLoader
+    loader := q.dataloader.JobLoader(ctx)
 
     for _, id := range args.IDs {
         thunk := loader.Load(ctx, dataloader.StringKey(id))
@@ -47,7 +47,7 @@ Each `thunk()` call forces DataLoader to execute before it can collect other req
 func (q JobQuery) JobsByIds(ctx context.Context, args struct {
     IDs []string
 }) ([]resolver.JobResolver, error) {
-    loader := q.dataloader.JobLoader
+    loader := q.dataloader.JobLoader(ctx)
 
     // STEP 1: Queue all Load() calls first
     thunks := make([]dataloader.Thunk, 0, len(args.IDs))

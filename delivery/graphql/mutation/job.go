@@ -12,8 +12,18 @@ type JobMutation struct {
 	dataloader *_dataloader.GeneralDataloader
 }
 
-func (q JobMutation) Enqueue(ctx context.Context, args struct{ Task string }) (*resolver.JobResolver, error) {
-	job, err := q.jobService.Enqueue(ctx, args.Task)
+type EnqueueArgs struct {
+	Task           string
+	IdempotencyKey *string
+}
+
+func (q JobMutation) Enqueue(ctx context.Context, args EnqueueArgs) (*resolver.JobResolver, error) {
+	key := ""
+	if args.IdempotencyKey != nil {
+		key = *args.IdempotencyKey
+	}
+
+	job, err := q.jobService.Enqueue(ctx, args.Task, key)
 	if err != nil {
 		return nil, err
 	}

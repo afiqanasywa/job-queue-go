@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s GeneralDataloader) JobBatchFunc(ctx context.Context, keys dataloader.Keys) []*dataloader.Result {
+func (s *GeneralDataloader) JobBatchFunc(ctx context.Context, keys dataloader.Keys) []*dataloader.Result {
 	results := make([]*dataloader.Result, len(keys))
 
 	// ---- 1. Extract IDs from keys ----

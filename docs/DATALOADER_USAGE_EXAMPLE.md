@@ -65,7 +65,7 @@ type JobResolver struct {
 // Task uses DataLoader to fetch the job
 func (q JobResolver) Task(ctx context.Context) (string, error) {
     // Get dataloader from context
-    loader := q.Dataloader.JobLoader
+    loader := q.Dataloader.JobLoader(ctx)
 
     // Load job using DataLoader - THIS TRIGGERS JobBatchFunc!
     thunk := loader.Load(ctx, dataloader.StringKey(q.Data.ID))
@@ -80,7 +80,7 @@ func (q JobResolver) Task(ctx context.Context) (string, error) {
 
 // Status uses DataLoader
 func (q JobResolver) Status(ctx context.Context) (string, error) {
-    loader := q.Dataloader.JobLoader
+    loader := q.Dataloader.JobLoader(ctx)
     thunk := loader.Load(ctx, dataloader.StringKey(q.Data.ID))
     result, err := thunk()
     if err != nil {
@@ -93,7 +93,7 @@ func (q JobResolver) Status(ctx context.Context) (string, error) {
 
 // Attempts uses DataLoader
 func (q JobResolver) Attempts(ctx context.Context) (int32, error) {
-    loader := q.Dataloader.JobLoader
+    loader := q.Dataloader.JobLoader(ctx)
     thunk := loader.Load(ctx, dataloader.StringKey(q.Data.ID))
     result, err := thunk()
     if err != nil {
@@ -116,7 +116,7 @@ Add a new GraphQL query specifically designed to test DataLoader:
 func (q JobQuery) JobsByIds(ctx context.Context, args struct {
     IDs []string
 }) ([]resolver.JobResolver, error) {
-    loader := q.dataloader.JobLoader
+    loader := q.dataloader.JobLoader(ctx)
 
     resolvers := make([]resolver.JobResolver, 0, len(args.IDs))
 
@@ -215,7 +215,7 @@ To quickly test if DataLoader works, create this simple query:
 ```go
 // Add to query/job.go
 func (q JobQuery) TestDataLoader(ctx context.Context) (string, error) {
-    loader := q.dataloader.JobLoader
+    loader := q.dataloader.JobLoader(ctx)
 
     // Simulate loading 3 jobs
     ids := []string{"id1", "id2", "id3"}
